@@ -20,7 +20,7 @@ void setup() {
   ac = new AudioContext();
   
   try {
-    mainSP = new SamplePlayer(ac, new Sample(mainSoundFile));
+    mainSP = new SamplePlayer(ac, SampleManager.sample(mainSoundFile));
   }
   catch(Exception e) {
     println("Failed to find main sound file: \"" + mainSoundFile + "\"");
