@@ -1,7 +1,9 @@
 import ddf.minim.*;
+import ddf.minim.ugens.*;
 
 Minim minim;
 AudioPlayer mainSound;
+Line mainSoundGainRamp;
 
 int currTime, prevTime; // milliseconds
 int padWidth = 80;
