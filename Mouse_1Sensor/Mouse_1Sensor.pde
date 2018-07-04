@@ -19,7 +19,7 @@ void setup() {
   // Temporarily use a sinewave
   wp = new WavePlayer(ac, 440, Buffer.SINE);
   
-  gGlide = new Glide(ac, 0.0, 2000); // from 0, over 2000ms
+  gGlide = new Glide(ac, 0.0, 100); // from 0, over 100ms
   g = new Gain(ac, 1, gGlide); // 1x i/o
   g.addInput(wp);
   
@@ -37,12 +37,6 @@ void draw() {
   rect((width - padWidth) / 2, height - padHeight, padWidth, padHeight);
   text(gGlide.getValue(), 10, 10);
   
-  // Apply envelope
-  currTime = millis();
-  if (gGlide.getValue() == 1.0)
-    gGlide.setValue(0.05);
-  else if (currTime - prevTime > 3000) {
-    gGlide.setValue(1.0);
-    prevTime = currTime + 5000;
-  }
+  // Glide follows mouse vertical value
+  gGlide.setValue(mouseY / (float)height);
 }
