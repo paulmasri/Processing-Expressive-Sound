@@ -2,6 +2,7 @@ import beads.*;
 
 AudioContext ac;
 WavePlayer wp;
+Gain g;
 
 int currTime, prevTime; // milliseconds
 int padWidth = 80;
@@ -17,7 +18,10 @@ void setup() {
   // Temporarily use a sinewave
   wp = new WavePlayer(ac, 440, Buffer.SINE);
   
-  ac.out.addInput(wp);
+  g = new Gain(ac, 1, 0.05); // 1x i/o, gain 5%
+  g.addInput(wp);
+  
+  ac.out.addInput(g);
   ac.start();
   
   prevTime = millis();
