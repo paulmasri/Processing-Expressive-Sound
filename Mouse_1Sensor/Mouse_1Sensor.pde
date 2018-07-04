@@ -44,11 +44,17 @@ void setup() {
 void draw() {
   background(255);
   
+  float sensorPosition = mouseY / (float)height;
+  
   // Draw virtual sensor
   fill(0, 127, 255);
   rect((width - padWidth) / 2, height - padHeight, padWidth, padHeight);
-  text(mainGainGlide.getValue(), 10, 10);
+  fill(0, 40, 192);
+  text("Rain gain:" , 10, 20);
+  text(mainGainGlide.getValue(), 200, 20);
+  text("Sensor position:" , 10, 40);
+  text(sensorPosition, 200, 40);
   
   // Glide follows mouse vertical value
-  mainGainGlide.setValue(mouseY / (float)height);
+  mainGainGlide.setValue(sensorPosition);
 }
