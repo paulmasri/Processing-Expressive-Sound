@@ -35,10 +35,11 @@ void draw() {
   // Draw virtual sensor
   fill(0, 127, 255);
   rect((width - padWidth) / 2, height - padHeight, padWidth, padHeight);
+  text(gGlide.getValue(), 10, 10);
   
   // Apply envelope
   currTime = millis();
-  if (currTime - prevTime > 2000) {
+  if (currTime - prevTime > 3000) {
     gGlide.setValue(1.0);
     prevTime = currTime + 10000;
   }
