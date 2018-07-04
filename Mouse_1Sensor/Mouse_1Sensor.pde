@@ -1,7 +1,7 @@
-import processing.sound.*;
+import ddf.minim.*;
 
-SoundFile sample;
-Env env;
+Minim minim;
+AudioPlayer mainSound;
 
 int currTime, prevTime; // milliseconds
 int padWidth = 80;
@@ -12,12 +12,10 @@ void setup() {
   background(255);
   noStroke();
   
-  sample = new SoundFile(this, "Rain-loop.mp3");
-  sample.loop();
-  sample.amp(0.5);
-  
-  //env = new Env(this);
-  
+  minim = new Minim(this);
+  mainSound = minim.loadFile("Rain-loop.mp3");
+  mainSound.play();
+
   prevTime = millis();
 }
 
@@ -31,8 +29,6 @@ void draw() {
   // Apply envelope
   currTime = millis();
   if (currTime - prevTime > 2000) {
-    env = new Env(this);
-    env.play(sample, 1, 5, 0.2, 1);
     prevTime = currTime + 10000;
   }
 }
