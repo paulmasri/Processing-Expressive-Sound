@@ -44,7 +44,7 @@ void setup() {
 void draw() {
   background(255);
   
-  float sensorPosition = mouseY / (float)height;
+  float sensorPosition = map(mouseY, 0, height, 0.0, 1.0);
   
   // Draw virtual sensor
   fill(0, 127, 255);
