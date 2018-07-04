@@ -39,8 +39,10 @@ void draw() {
   
   // Apply envelope
   currTime = millis();
-  if (currTime - prevTime > 3000) {
+  if (gGlide.getValue() == 1.0)
+    gGlide.setValue(0.05);
+  else if (currTime - prevTime > 3000) {
     gGlide.setValue(1.0);
-    prevTime = currTime + 10000;
+    prevTime = currTime + 5000;
   }
 }
