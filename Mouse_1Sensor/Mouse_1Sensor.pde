@@ -3,6 +3,7 @@ import beads.*;
 AudioContext ac;
 WavePlayer wp;
 Gain g;
+Glide gGlide;
 
 int currTime, prevTime; // milliseconds
 int padWidth = 80;
@@ -18,7 +19,8 @@ void setup() {
   // Temporarily use a sinewave
   wp = new WavePlayer(ac, 440, Buffer.SINE);
   
-  g = new Gain(ac, 1, 0.05); // 1x i/o, gain 5%
+  gGlide = new Glide(ac, 0.0, 2000); // from 0, over 2000ms
+  g = new Gain(ac, 1, gGlide); // 1x i/o
   g.addInput(wp);
   
   ac.out.addInput(g);
@@ -37,6 +39,7 @@ void draw() {
   // Apply envelope
   currTime = millis();
   if (currTime - prevTime > 2000) {
+    gGlide.setValue(1.0);
     prevTime = currTime + 10000;
   }
 }
