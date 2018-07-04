@@ -1,9 +1,10 @@
 import beads.*;
 
 AudioContext ac;
-WavePlayer wp;
-Gain g;
-Glide gGlide;
+String mainSoundFile;
+SamplePlayer mainSP;
+Gain mainGain;
+Glide mainGainGlide;
 
 int currTime, prevTime; // milliseconds
 int padWidth = 80;
@@ -14,16 +15,27 @@ void setup() {
   background(255);
   noStroke();
   
+  mainSoundFile = sketchPath("") + "data/Rain-loop.mp3";
+  
   ac = new AudioContext();
   
-  // Temporarily use a sinewave
-  wp = new WavePlayer(ac, 440, Buffer.SINE);
+  try {
+    mainSP = new SamplePlayer(ac, new Sample(mainSoundFile));
+  }
+  catch(Exception e) {
+    println("Failed to find main sound file: \"" + mainSoundFile + "\"");
+    e.printStackTrace();
+    exit();
+  }
   
-  gGlide = new Glide(ac, 0.0, 100); // from 0, over 100ms
-  g = new Gain(ac, 1, gGlide); // 1x i/o
-  g.addInput(wp);
+  mainGainGlide = new Glide(ac, 0.0, 100); // from 0, over 100ms
+  mainGain = new Gain(ac, 1, mainGainGlide); // 1x i/o
+  mainGain.addInput(mainSP);
   
-  ac.out.addInput(g);
+  mainSP.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
+  mainSP.start();
+  
+  ac.out.addInput(mainGain);
   ac.start();
   
   prevTime = millis();
@@ -35,8 +47,8 @@ void draw() {
   // Draw virtual sensor
   fill(0, 127, 255);
   rect((width - padWidth) / 2, height - padHeight, padWidth, padHeight);
-  text(gGlide.getValue(), 10, 10);
+  text(mainGainGlide.getValue(), 10, 10);
   
   // Glide follows mouse vertical value
-  gGlide.setValue(mouseY / (float)height);
+  mainGainGlide.setValue(mouseY / (float)height);
 }
