@@ -14,7 +14,7 @@ void setup() {
   
   minim = new Minim(this);
   mainSound = minim.loadFile("Rain-loop.mp3");
-  mainSound.play();
+  mainSound.loop();
 
   prevTime = millis();
 }
