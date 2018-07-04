@@ -1,9 +1,7 @@
-import ddf.minim.*;
-import ddf.minim.ugens.*;
+import beads.*;
 
-Minim minim;
-AudioPlayer mainSound;
-Line mainSoundGainRamp;
+AudioContext ac;
+WavePlayer wp;
 
 int currTime, prevTime; // milliseconds
 int padWidth = 80;
@@ -14,10 +12,14 @@ void setup() {
   background(255);
   noStroke();
   
-  minim = new Minim(this);
-  mainSound = minim.loadFile("Rain-loop.mp3");
-  mainSound.loop();
-
+  ac = new AudioContext();
+  
+  // Temporarily use a sinewave
+  wp = new WavePlayer(ac, 440, Buffer.SINE);
+  
+  ac.out.addInput(wp);
+  ac.start();
+  
   prevTime = millis();
 }
 
