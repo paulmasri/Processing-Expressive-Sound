@@ -15,7 +15,7 @@ void setup() {
   background(255);
   noStroke();
   
-  mainSoundFile = sketchPath("") + "data/Rain-loop.mp3";
+  mainSoundFile = sketchPath("") + "data/Rain-loop.wav";
   
   ac = new AudioContext();
   
@@ -45,16 +45,20 @@ void draw() {
   background(255);
   
   float sensorPosition = map(mouseY, 0, height, 0.0, 1.0);
+  float logGainTarget = sensorPosition;
+  //float logGainTarget = (log(980 * sensorPosition) + 20) / 1000;
   
   // Draw virtual sensor
   fill(0, 127, 255);
   rect((width - padWidth) / 2, height - padHeight, padWidth, padHeight);
   fill(0, 40, 192);
-  text("Rain gain:" , 10, 20);
-  text(mainGainGlide.getValue(), 200, 20);
-  text("Sensor position:" , 10, 40);
-  text(sensorPosition, 200, 40);
+  text("Sensor position:" , 10, 20);
+  text(sensorPosition, 200, 20);
+  text("Rain gain target:" , 10, 40);
+  text(logGainTarget, 200, 40);
+  text("Rain gain:" , 10, 60);
+  text(mainGainGlide.getValue(), 200, 60);
   
   // Glide follows mouse vertical value
-  mainGainGlide.setValue(sensorPosition);
+  mainGainGlide.setValue(logGainTarget);
 }
