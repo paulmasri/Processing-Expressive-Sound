@@ -12,7 +12,7 @@ Gain spotGain;
 // Persistent variables for calculation
 int prevTime; // ms
 float prevSensorPosition = -1.0;
-int spDuration = 100;
+int spDuration = 200;
 int blockSpotRetriggerInterval = 1000;
 int prevSpotTrigger;
 
