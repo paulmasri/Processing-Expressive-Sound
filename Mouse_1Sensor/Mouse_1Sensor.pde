@@ -53,16 +53,15 @@ void setup() {
     e.printStackTrace();
     exit();
   }
-
+  mainSP.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
   mainGainGlide = new Glide(ac, 0.0, spDuration);
   mainGain = new Gain(ac, 1, mainGainGlide); // 1x i/o
   mainGain.addInput(mainSP);
-
-  mainSP.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
-  mainSP.start();
-
   ac.out.addInput(mainGain);
+
+
   ac.start();
+  mainSP.start();
 
   prevTime = millis();
 }
