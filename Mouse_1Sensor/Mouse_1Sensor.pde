@@ -104,9 +104,9 @@ void draw() {
   text("Rain gain:" , 10, 60);
   text(mainGainGlide.getValue(), 200, 60);
   text("Sensor velocity:" , 310, 40);
-  text(sensorVelocity * 1000.0, 400, 40);
+  text(map(sensorVelocity, 0.01, -0.01, -10, 10), 400, 40);
   text("Smooth velocity:" , 310, 60);
-  text(svValue * 1000.0, 400, 60);
+  text(map(svValue, 0.01, -0.01, -10, 10), 400, 60);
   
   // Update visual buffers
   shiftBuffer(spHistory, nHistoryBuffer);
