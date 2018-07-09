@@ -9,6 +9,7 @@ Glide mainGainGlide;
 // Persistent variables for calculation
 int prevTime; // ms
 float prevSensorPosition = -1.0;
+int spDuration = 100;
 
 // Sensor velocity variables
 float svDuration = 25.0; // ms
@@ -51,7 +52,7 @@ void setup() {
     exit();
   }
   
-  mainGainGlide = new Glide(ac, 0.0, 100); // from 0, over 100ms
+  mainGainGlide = new Glide(ac, 0.0, spDuration);
   mainGain = new Gain(ac, 1, mainGainGlide); // 1x i/o
   mainGain.addInput(mainSP);
   
