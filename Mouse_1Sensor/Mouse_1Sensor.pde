@@ -17,7 +17,7 @@ float svElapsed = 0.0; // ms
 float svTarget = 0.0;
 float svIncrement = 0.0;
 float svValue = 0.0;
-float svThreshold = -0.003;
+float svThreshold = -0.002;
 
 // Visual elements
 int padWidth = 80;
