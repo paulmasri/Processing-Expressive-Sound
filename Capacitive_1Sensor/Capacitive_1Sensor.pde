@@ -1,3 +1,11 @@
+import processing.serial.*;
+import cc.arduino.*;
+
+Arduino arduino;
+int arduinoSensorPin = 2;
+int minArduinoSensorValue = 30;
+int maxArduinoSensorValue = 1000;
+
 import beads.*;
 
 AudioContext ac;
@@ -39,6 +47,9 @@ void setup() {
   size(600, 400);
   background(255);
   noStroke();
+
+  println(Arduino.list());
+  arduino = new Arduino(this, Arduino.list()[2], 57600);
 
   spHistory = new float[nHistoryBuffer];
   spSmoothHistory = new float[nHistoryBuffer];
@@ -89,7 +100,10 @@ void setup() {
 void draw() {
   background(255);
 
-  float sensorPosition = map(mouseY, 0, height, 0.0, 1.0);
+  int sensorRaw = arduino.analogRead(arduinoSensorPin);
+  println(sensorRaw);
+  sensorRaw = max(min(sensorRaw, maxArduinoSensorValue), minArduinoSensorValue);
+  float sensorPosition = map(sensorRaw, minArduinoSensorValue, maxArduinoSensorValue, 0.0, 1.0);
   float logGainTarget = sensorPosition;
   //float logGainTarget = (log(980 * sensorPosition) + 20) / 1000;
 
