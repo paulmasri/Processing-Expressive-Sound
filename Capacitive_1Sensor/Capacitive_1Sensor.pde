@@ -18,7 +18,10 @@ SamplePlayer spotSP;
 Gain spotGain;
 
 // Persistent variables for calculation
+int state = 0;
 int prevTime; // ms
+int countdownDuration = 3000;
+int calibrationDuration = 5000;
 float prevSensorPosition = -1.0;
 int spDuration = 200;
 int blockSpotRetriggerInterval = 1000;
@@ -99,7 +102,80 @@ void setup() {
 
 void draw() {
   background(255);
+  fill(192, 192, 255);
+  text("State: " + state, 10, height - 10);
+  
+  int nextState = state;
+  switch (state) {
+    case 0: nextState = stateInit(); break;
+    case 1: nextState = stateCountdown(state, "Remove your hand. Calibrating minimum in..."); break;
+    case 2: nextState = stateCalibrateMin(); break;
+    case 3: nextState = stateCountdown(state, "Press hard on the sensor. Calibrating maximum in..."); break;
+    case 4: nextState = stateCalibrateMax(); break;
+    case 5: nextState = stateCountdown(state, "Remove your hand. Ready to start playing in..."); break;
+    case 6: stateRun(); break;
+  }
+  state = nextState;    
+}
 
+int stateInit() {
+  fill(0, 40, 192);
+  text("Ready. Press any key to start" , 10, 20);
+  return state;
+}
+
+int stateCountdown(int state, String message) {
+  fill(0, 40, 192);
+  text(message, 10, 20);
+  
+  int currTime = millis();
+  if (currTime - prevTime >= countdownDuration) {
+    prevTime = currTime;
+    return state + 1;
+  }
+  else {
+    int remaining = floor((countdownDuration - (currTime - prevTime)) / 1000.0) + 1;
+    fill(255, 0, 0);
+    text (remaining, width / 2, height / 2);
+  }
+  return state;
+}
+
+int stateCalibrateMin() {
+  fill(0, 40, 192);
+  text("Calibrating..." , 10, 20);
+  
+  int currTime = millis();
+  if (currTime - prevTime >= calibrationDuration) {
+    prevTime = currTime;
+    return state + 1;
+  }
+  else {
+    int remaining = floor((calibrationDuration - (currTime - prevTime)) / 1000.0) + 1;
+    fill(0, 255, 0);
+    text (remaining, width / 2, height / 2);
+  }
+  return state;
+}
+
+int stateCalibrateMax() {
+  fill(0, 40, 192);
+  text("Calibrating..." , 10, 20);
+  
+  int currTime = millis();
+  if (currTime - prevTime >= calibrationDuration) {
+    prevTime = currTime;
+    return state + 1;
+  }
+  else {
+    int remaining = floor((calibrationDuration - (currTime - prevTime)) / 1000.0) + 1;
+    fill(0, 255, 0);
+    text (remaining, width / 2, height / 2);
+  }
+  return state;
+}
+
+int stateRun() {
   int sensorRaw = arduino.analogRead(arduinoSensorPin);
   println(sensorRaw);
   sensorRaw = max(min(sensorRaw, maxArduinoSensorValue), minArduinoSensorValue);
@@ -182,6 +258,8 @@ void draw() {
   prevTime = currTime;
   prevSensorPosition = sensorPosition;
   svIterate(dt);
+  
+  return state;
 }
 
 void svSetTarget(float target) {
@@ -205,4 +283,11 @@ void svIterate(float dt) {
 void shiftBuffer(float[] buffer, int n) {
   for (int i = n - 1; i > 0; --i)
     buffer[i] = buffer[i - 1];
+}
+
+void keyPressed() {
+  if (state == 0) {
+    prevTime = millis();
+    state++;
+  }
 }
