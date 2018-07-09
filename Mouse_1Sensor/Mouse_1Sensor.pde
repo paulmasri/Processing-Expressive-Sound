@@ -41,9 +41,10 @@ void setup() {
   svSmoothHistory = new float[nHistoryBuffer];
 
   mainSoundFile = sketchPath("") + "data/Rain-loop.wav";
-  
+
   ac = new AudioContext();
-  
+
+  // Main sound
   try {
     mainSP = new SamplePlayer(ac, SampleManager.sample(mainSoundFile));
   }
@@ -52,27 +53,27 @@ void setup() {
     e.printStackTrace();
     exit();
   }
-  
+
   mainGainGlide = new Glide(ac, 0.0, spDuration);
   mainGain = new Gain(ac, 1, mainGainGlide); // 1x i/o
   mainGain.addInput(mainSP);
-  
+
   mainSP.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
   mainSP.start();
 
   ac.out.addInput(mainGain);
   ac.start();
-  
+
   prevTime = millis();
 }
 
 void draw() {
   background(255);
-  
+
   float sensorPosition = map(mouseY, 0, height, 0.0, 1.0);
   float logGainTarget = sensorPosition;
   //float logGainTarget = (log(980 * sensorPosition) + 20) / 1000;
-  
+
   int currTime = millis();
   float dt = (float)currTime - prevTime; // seconds
   float sensorVelocity = svValue;
@@ -121,7 +122,7 @@ void draw() {
   text(map(sensorVelocity, 0.01, -0.01, -10, 10), 500, 40);
   text("Smooth velocity:" , 310, 60);
   text(map(svValue, 0.01, -0.01, -10, 10), 500, 60);
-  
+
   // Update visual buffers
   shiftBuffer(spHistory, nHistoryBuffer);
   spHistory[0] = logGainTarget;
