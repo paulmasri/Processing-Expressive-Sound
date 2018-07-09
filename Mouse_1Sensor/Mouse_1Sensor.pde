@@ -12,7 +12,7 @@ float prevSensorPosition = -1.0;
 int spDuration = 100;
 
 // Sensor velocity variables
-float svDuration = 25.0; // ms
+float svDuration = 100.0; // ms
 float svElapsed = 0.0; // ms
 float svTarget = 0.0;
 float svIncrement = 0.0;
@@ -86,14 +86,15 @@ void draw() {
   // Draw visual buffers
   for (int i = 0; i < nHistoryBuffer; ++i) {
     float x = map(i, nHistoryBuffer, 0, 0.0, width / 2.0);
+    float dotSize = (i == 0)? dotRadiusNew: dotRadiusOld;
     fill(224, 255, 224);
-    ellipse(x, map(spHistory[i], 0.0, 1.0, 0, height), dotRadiusOld, dotRadiusOld);
+    ellipse(x, map(spHistory[i], 0.0, 1.0, 0, height), dotSize, dotSize);
     fill(0, 224, 0);
-    ellipse(x, map(spSmoothHistory[i], 0.0, 1.0, 0, height), dotRadiusOld, dotRadiusOld);
+    ellipse(x, map(spSmoothHistory[i], 0.0, 1.0, 0, height), dotSize, dotSize);
     fill(255, 192, 192);
-    ellipse(x, map(svHistory[i], 0.01, -0.01, 0, height), dotRadiusOld, dotRadiusOld);
+    ellipse(x, map(svHistory[i], 0.01, -0.01, 0, height), dotSize, dotSize);
     fill(224, 0, 0);
-    ellipse(x, map(svSmoothHistory[i], 0.01, -0.01, 0, height), dotRadiusOld, dotRadiusOld);
+    ellipse(x, map(svSmoothHistory[i], 0.01, -0.01, 0, height), dotSize, dotSize);
   }
 
   // Output text values
