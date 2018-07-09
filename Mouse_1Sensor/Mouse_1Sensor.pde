@@ -17,6 +17,7 @@ float svElapsed = 0.0; // ms
 float svTarget = 0.0;
 float svIncrement = 0.0;
 float svValue = 0.0;
+float svThreshold = -0.003;
 
 // Visual elements
 int padWidth = 80;
@@ -93,7 +94,12 @@ void draw() {
     ellipse(x, map(spSmoothHistory[i], 0.0, 1.0, 0, height), dotSize, dotSize);
     fill(255, 192, 255);
     ellipse(x, map(svHistory[i], 0.01, -0.01, 0, height), dotSize, dotSize);
-    fill(224, 0, 224);
+    if (svSmoothHistory[i] < svThreshold) {
+      fill(224, 0, 0);
+      dotSize *= 1.5;
+    }
+    else
+      fill(224, 0, 224);
     ellipse(x, map(svSmoothHistory[i], 0.01, -0.01, 0, height), dotSize, dotSize);
   }
 
