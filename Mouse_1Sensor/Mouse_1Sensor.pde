@@ -86,6 +86,12 @@ void draw() {
 
   // Draw visual buffers
   for (int i = 0; i < nHistoryBuffer; ++i) {
+    stroke(224, 224, 224);
+    line(0, height / 2, width / 2, height / 2);
+    stroke(255, 192, 192);
+    line(0, map(svThreshold, 0.01, -0.01, 0, height), width / 2, map(svThreshold, 0.01, -0.01, 0, height));
+    noStroke();
+
     float x = map(i, nHistoryBuffer, 0, 0.0, width / 2.0);
     float dotSize = (i == 0)? dotRadiusNew: dotRadiusOld;
     fill(224, 255, 224);
