@@ -22,6 +22,8 @@ int state = 0;
 int prevTime; // ms
 int countdownDuration = 3000;
 int calibrationDuration = 5000;
+int[] calibrationData;
+int calibrationIndex = 0;
 float prevSensorPosition = -1.0;
 int spDuration = 200;
 int blockSpotRetriggerInterval = 1000;
@@ -53,6 +55,7 @@ void setup() {
 
   println(Arduino.list());
   arduino = new Arduino(this, Arduino.list()[2], 57600);
+  calibrationData = new int[3000];
 
   spHistory = new float[nHistoryBuffer];
   spSmoothHistory = new float[nHistoryBuffer];
@@ -144,9 +147,17 @@ int stateCountdown(int state, String message) {
 int stateCalibrateMin() {
   fill(0, 40, 192);
   text("Calibrating..." , 10, 20);
-  
+
+  int sensorRaw = arduino.analogRead(arduinoSensorPin);
+  println(sensorRaw);
+  calibrationData[calibrationIndex++] = sensorRaw;
+
   int currTime = millis();
   if (currTime - prevTime >= calibrationDuration) {
+    minArduinoSensorValue = 0;
+    for (int i = 0; i < calibrationIndex; ++i)
+      minArduinoSensorValue = max(minArduinoSensorValue, calibrationData[i]);
+    calibrationIndex = 0;
     prevTime = currTime;
     return state + 1;
   }
@@ -161,9 +172,17 @@ int stateCalibrateMin() {
 int stateCalibrateMax() {
   fill(0, 40, 192);
   text("Calibrating..." , 10, 20);
+
+  int sensorRaw = arduino.analogRead(arduinoSensorPin);
+  println(sensorRaw);
+  calibrationData[calibrationIndex++] = sensorRaw;
   
   int currTime = millis();
   if (currTime - prevTime >= calibrationDuration) {
+    maxArduinoSensorValue = 0;
+    for (int i = 0; i < calibrationIndex; ++i)
+      maxArduinoSensorValue = min(maxArduinoSensorValue, calibrationData[i]);
+    calibrationIndex = 0;
     prevTime = currTime;
     return state + 1;
   }
@@ -220,6 +239,8 @@ int stateRun() {
   }
 
   // Output text values
+  fill(192, 192, 255);
+  text("Min: " + minArduinoSensorValue + ", Max: " + maxArduinoSensorValue, 10, height - 30);
   fill(0, 40, 192);
   text("Sensor position:" , 10, 20);
   text(sensorPosition, 200, 20);
