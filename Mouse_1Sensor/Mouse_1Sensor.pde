@@ -6,7 +6,18 @@ SamplePlayer mainSP;
 Gain mainGain;
 Glide mainGainGlide;
 
-int currTime, prevTime; // milliseconds
+// Persistent variables for calculation
+int prevTime; // ms
+float prevSensorPosition = -1.0;
+
+// Sensor velocity variables
+float svDuration = 25.0; // ms
+float svElapsed = 0.0; // ms
+float svTarget = 0.0;
+float svIncrement = 0.0;
+float svValue = 0.0;
+
+// Visual elements
 int padWidth = 80;
 int padHeight = 10;
 
@@ -34,7 +45,7 @@ void setup() {
   
   mainSP.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
   mainSP.start();
-  
+
   ac.out.addInput(mainGain);
   ac.start();
   
@@ -48,6 +59,12 @@ void draw() {
   float logGainTarget = sensorPosition;
   //float logGainTarget = (log(980 * sensorPosition) + 20) / 1000;
   
+  int currTime = millis();
+  float dt = (float)currTime - prevTime; // seconds
+  float sensorVelocity = svValue;
+  if (prevSensorPosition != -1.0 && dt > 0.0)
+    sensorVelocity = (sensorPosition - prevSensorPosition) / dt;
+
   // Draw virtual sensor
   fill(0, 127, 255);
   rect((width - padWidth) / 2, height - padHeight, padWidth, padHeight);
@@ -58,7 +75,35 @@ void draw() {
   text(logGainTarget, 200, 40);
   text("Rain gain:" , 10, 60);
   text(mainGainGlide.getValue(), 200, 60);
+  text("Sensor velocity:" , 310, 40);
+  text(sensorVelocity * 1000.0, 400, 40);
+  text("Smooth velocity:" , 310, 60);
+  text(svValue * 1000.0, 400, 60);
   
-  // Glide follows mouse vertical value
+  // Update Glides
   mainGainGlide.setValue(logGainTarget);
+  svSetTarget(sensorVelocity);
+
+  // Update persistent variables
+  prevTime = currTime;
+  prevSensorPosition = sensorPosition;
+  svIterate(dt);
+}
+
+void svSetTarget(float target) {
+  svTarget = target;
+  svElapsed = 0.0;
+  svIncrement = (target - svValue) / svDuration;
+}
+
+void svIterate(float dt) {
+  if (dt <= 0.0)
+    return;
+
+  if (svElapsed + dt >= svDuration)
+    svValue = svTarget;
+  else
+    svValue = svIncrement * dt;
+
+  svElapsed += dt;
 }
