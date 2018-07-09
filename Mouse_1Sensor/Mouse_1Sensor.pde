@@ -65,10 +65,13 @@ void draw() {
   if (prevSensorPosition != -1.0 && dt > 0.0)
     sensorVelocity = (sensorPosition - prevSensorPosition) / dt;
 
+  // Update UI
   // Draw virtual sensor
   fill(0, 127, 255);
   rect((width - padWidth) / 2, height - padHeight, padWidth, padHeight);
   fill(0, 40, 192);
+
+  // Output text values
   text("Sensor position:" , 10, 20);
   text(sensorPosition, 200, 20);
   text("Rain gain target:" , 10, 40);
