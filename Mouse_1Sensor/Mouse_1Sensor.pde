@@ -90,9 +90,9 @@ void draw() {
     fill(0, 224, 0);
     ellipse(x, map(spSmoothHistory[i], 0.0, 1.0, 0, height), dotRadiusOld, dotRadiusOld);
     fill(255, 192, 192);
-    ellipse(x, map(svHistory[i], -0.01, 0.01, 0, height), dotRadiusOld, dotRadiusOld);
+    ellipse(x, map(svHistory[i], 0.01, -0.01, 0, height), dotRadiusOld, dotRadiusOld);
     fill(224, 0, 0);
-    ellipse(x, map(svSmoothHistory[i], -0.01, 0.01, 0, height), dotRadiusOld, dotRadiusOld);
+    ellipse(x, map(svSmoothHistory[i], 0.01, -0.01, 0, height), dotRadiusOld, dotRadiusOld);
   }
 
   // Output text values
