@@ -5,11 +5,16 @@ String mainSoundFile;
 SamplePlayer mainSP;
 Gain mainGain;
 Glide mainGainGlide;
+String spotSoundFile;
+SamplePlayer spotSP;
+Gain spotGain;
 
 // Persistent variables for calculation
 int prevTime; // ms
 float prevSensorPosition = -1.0;
 int spDuration = 100;
+int blockSpotRetriggerInterval = 1000;
+int prevSpotTrigger;
 
 // Sensor velocity variables
 float svDuration = 100.0; // ms
@@ -41,6 +46,7 @@ void setup() {
   svSmoothHistory = new float[nHistoryBuffer];
 
   mainSoundFile = sketchPath("") + "data/Rain-loop.wav";
+  spotSoundFile = sketchPath("") + "data/Thunder1.wav";
 
   ac = new AudioContext();
 
@@ -59,11 +65,25 @@ void setup() {
   mainGain.addInput(mainSP);
   ac.out.addInput(mainGain);
 
+  // Spot sound
+  try {
+    spotSP = new SamplePlayer(ac, SampleManager.sample(spotSoundFile));
+  }
+  catch(Exception e) {
+    println("Failed to find spot sound file: \"" + spotSoundFile + "\"");
+    e.printStackTrace();
+    exit();
+  }
+  spotSP.setKillOnEnd(false);
+  spotGain = new Gain(ac, 1, 0.0);
+  spotGain.addInput(spotSP);
+  ac.out.addInput(spotGain);
 
   ac.start();
   mainSP.start();
 
   prevTime = millis();
+  prevSpotTrigger = prevTime;
 }
 
 void draw() {
@@ -131,6 +151,14 @@ void draw() {
   svHistory[0] = sensorVelocity;
   shiftBuffer(svSmoothHistory, nHistoryBuffer);
   svSmoothHistory[0] = svValue;
+
+  // Output spot sound if over threshold
+  if (svValue < svThreshold && currTime > prevSpotTrigger + blockSpotRetriggerInterval) {
+    println("Thunder!");
+    spotGain.setGain(1.0);
+    spotSP.reTrigger();
+    prevSpotTrigger = currTime;
+  }
 
   // Update Glides
   mainGainGlide.setValue(logGainTarget);
