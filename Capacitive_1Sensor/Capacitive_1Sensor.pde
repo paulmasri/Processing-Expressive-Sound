@@ -154,9 +154,10 @@ int stateCalibrateMin() {
 
   int currTime = millis();
   if (currTime - prevTime >= calibrationDuration) {
-    minArduinoSensorValue = 0;
+    float sum = 0;
     for (int i = 0; i < calibrationIndex; ++i)
-      minArduinoSensorValue = max(minArduinoSensorValue, calibrationData[i]);
+      sum += calibrationData[i];
+    minArduinoSensorValue = round(sum / calibrationIndex);
     calibrationIndex = 0;
     prevTime = currTime;
     return state + 1;
@@ -179,9 +180,10 @@ int stateCalibrateMax() {
   
   int currTime = millis();
   if (currTime - prevTime >= calibrationDuration) {
-    maxArduinoSensorValue = 0;
+    float sum = 0;
     for (int i = 0; i < calibrationIndex; ++i)
-      maxArduinoSensorValue = min(maxArduinoSensorValue, calibrationData[i]);
+      sum += calibrationData[i];
+    maxArduinoSensorValue = round(sum / calibrationIndex);
     calibrationIndex = 0;
     prevTime = currTime;
     return state + 1;
