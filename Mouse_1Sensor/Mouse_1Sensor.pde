@@ -75,13 +75,13 @@ void draw() {
   float dt = (float)currTime - prevTime; // seconds
   float sensorVelocity = svValue;
   if (prevSensorPosition != -1.0 && dt > 0.0)
-    sensorVelocity = (sensorPosition - prevSensorPosition) / dt;
+    sensorVelocity = (mainGainGlide.getValue() - prevSensorPosition) / dt;
 
   // Update UI
   // Draw virtual sensor
   fill(0, 127, 255);
   rect((width - padWidth) / 2, height - padHeight, padWidth, padHeight);
-  
+
   // Draw visual buffers
   for (int i = 0; i < nHistoryBuffer; ++i) {
     float x = map(i, nHistoryBuffer, 0, 0.0, width / 2.0);
