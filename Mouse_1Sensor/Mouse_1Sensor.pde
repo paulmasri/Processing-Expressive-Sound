@@ -20,12 +20,24 @@ float svValue = 0.0;
 // Visual elements
 int padWidth = 80;
 int padHeight = 10;
+float dotRadiusNew = 20;
+float dotRadiusOld = 3;
+int nHistoryBuffer = 100;
+float[] spHistory; //NB: these are reverse buffers: add latest value at [0] and shift right
+float[] spSmoothHistory;
+float[] svHistory;
+float[] svSmoothHistory;
 
 void setup() {
   size(600, 400);
   background(255);
   noStroke();
-  
+
+  spHistory = new float[nHistoryBuffer];
+  spSmoothHistory = new float[nHistoryBuffer];
+  svHistory = new float[nHistoryBuffer];
+  svSmoothHistory = new float[nHistoryBuffer];
+
   mainSoundFile = sketchPath("") + "data/Rain-loop.wav";
   
   ac = new AudioContext();
@@ -69,9 +81,22 @@ void draw() {
   // Draw virtual sensor
   fill(0, 127, 255);
   rect((width - padWidth) / 2, height - padHeight, padWidth, padHeight);
-  fill(0, 40, 192);
+  
+  // Draw visual buffers
+  for (int i = 0; i < nHistoryBuffer; ++i) {
+    float x = map(i, nHistoryBuffer, 0, 0.0, width / 2.0);
+    fill(224, 255, 224);
+    ellipse(x, map(spHistory[i], 0.0, 1.0, 0, height), dotRadiusOld, dotRadiusOld);
+    fill(0, 224, 0);
+    ellipse(x, map(spSmoothHistory[i], 0.0, 1.0, 0, height), dotRadiusOld, dotRadiusOld);
+    fill(255, 192, 192);
+    ellipse(x, map(svHistory[i], -0.01, 0.01, 0, height), dotRadiusOld, dotRadiusOld);
+    fill(224, 0, 0);
+    ellipse(x, map(svSmoothHistory[i], -0.01, 0.01, 0, height), dotRadiusOld, dotRadiusOld);
+  }
 
   // Output text values
+  fill(0, 40, 192);
   text("Sensor position:" , 10, 20);
   text(sensorPosition, 200, 20);
   text("Rain gain target:" , 10, 40);
@@ -83,6 +108,16 @@ void draw() {
   text("Smooth velocity:" , 310, 60);
   text(svValue * 1000.0, 400, 60);
   
+  // Update visual buffers
+  shiftBuffer(spHistory, nHistoryBuffer);
+  spHistory[0] = logGainTarget;
+  shiftBuffer(spSmoothHistory, nHistoryBuffer);
+  spSmoothHistory[0] = mainGainGlide.getValue();
+  shiftBuffer(svHistory, nHistoryBuffer);
+  svHistory[0] = sensorVelocity;
+  shiftBuffer(svSmoothHistory, nHistoryBuffer);
+  svSmoothHistory[0] = svValue;
+
   // Update Glides
   mainGainGlide.setValue(logGainTarget);
   svSetTarget(sensorVelocity);
@@ -109,4 +144,9 @@ void svIterate(float dt) {
     svValue = svIncrement * dt;
 
   svElapsed += dt;
+}
+
+void shiftBuffer(float[] buffer, int n) {
+  for (int i = n - 1; i > 0; --i)
+    buffer[i] = buffer[i - 1];
 }
